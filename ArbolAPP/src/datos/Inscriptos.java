@@ -1,12 +1,13 @@
 package datos;
 
+import entradaDatos.Consola;
+import excepciones.CadenaLargaExcepcion;
+import excepciones.CadenaVaciaExcepcion;
+import excepciones.NumeroNegativoExcepcion;
+import interfaces.Comparador;
 import java.util.Objects;
 
-/**
- * documento, apellido y nombre, telefono, forma de pago (efectivo/tarjeta), monto del curso,
- * estado (pagado/deuda).
- */
-public class Inscriptos {
+public class Inscriptos implements Comparador{
 
     private long dni;
     private int formaPago;
@@ -17,6 +18,13 @@ public class Inscriptos {
     private boolean estado;
 
     public Inscriptos() {
+        this.dni = 0;
+        this.formaPago = 0;
+        this.montoCuento = 0;
+        this.apellido = "";
+        this.nombre = "";
+        this.telefono = "";
+        this.estado = false;
     }
 
     public Inscriptos(long dni, int formaPago, double montoCuento, String apellido, String nombre, String telefono, boolean estado) {
@@ -33,7 +41,10 @@ public class Inscriptos {
         return dni;
     }
 
-    public void setDni(long dni) {
+    public void setDni(long dni) throws NumeroNegativoExcepcion {
+        if (dni < 0) {
+            throw new NumeroNegativoExcepcion();
+        }
         this.dni = dni;
     }
 
@@ -41,7 +52,10 @@ public class Inscriptos {
         return formaPago;
     }
 
-    public void setFormaPago(int formaPago) {
+    public void setFormaPago(int formaPago) throws NumeroNegativoExcepcion{
+        if (formaPago < 0) {
+            throw new NumeroNegativoExcepcion();
+        }
         this.formaPago = formaPago;
     }
 
@@ -49,7 +63,10 @@ public class Inscriptos {
         return montoCuento;
     }
 
-    public void setMontoCuento(double montoCuento) {
+    public void setMontoCuento(double montoCuento) throws NumeroNegativoExcepcion {
+        if (montoCuento < 0) {
+            throw new NumeroNegativoExcepcion();
+        }
         this.montoCuento = montoCuento;
     }
 
@@ -57,7 +74,12 @@ public class Inscriptos {
         return apellido;
     }
 
-    public void setApellido(String apellido) {
+    public void setApellido(String apellido) throws CadenaLargaExcepcion, CadenaVaciaExcepcion {
+        if (apellido.trim().length() < 1) {
+            throw new CadenaVaciaExcepcion();
+        } else if (apellido.trim().length() <= 60) {
+            throw new CadenaLargaExcepcion();
+        }
         this.apellido = apellido;
     }
 
@@ -65,7 +87,12 @@ public class Inscriptos {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
+    public void setNombre(String nombre) throws CadenaLargaExcepcion, CadenaVaciaExcepcion {
+        if (nombre.trim().length() < 1) {
+            throw new CadenaVaciaExcepcion();
+        } else if (nombre.trim().length() <= 60) {
+            throw new CadenaLargaExcepcion();
+        }
         this.nombre = nombre;
     }
 
@@ -73,7 +100,12 @@ public class Inscriptos {
         return telefono;
     }
 
-    public void setTelefono(String telefono) {
+    public void setTelefono(String telefono) throws CadenaLargaExcepcion, CadenaVaciaExcepcion {
+        if (telefono.trim().length() < 1) {
+            throw new CadenaVaciaExcepcion();
+        } else if (telefono.trim().length() <= 60) {
+            throw new CadenaLargaExcepcion();
+        }
         this.telefono = telefono;
     }
 
@@ -83,6 +115,57 @@ public class Inscriptos {
 
     public void setEstado(boolean estado) {
         this.estado = estado;
+    }
+    
+    public void cargarDatos() {
+        cargarDNI();
+        cargarApellido();
+        cargarNombre();
+    }
+    
+    public void cargarDNI() {
+        long ax = 0;
+        boolean flag = false;
+        while (!flag) {
+            try {
+                System.out.print("DNI:");
+                ax = Consola.readLong();
+                setDni(ax);
+                flag = true;
+            } catch (NumeroNegativoExcepcion | NumberFormatException ex) {
+                System.out.println("Error:" + ex.getMessage());
+            }
+        }
+    }
+
+    private void cargarApellido() {
+        String ax = "";
+        boolean flag = false;
+        while (!flag) {
+            try {
+                System.out.print("Apellido:");
+                ax = Consola.readLine();
+                setApellido(ax);
+                flag = true;
+            } catch (CadenaVaciaExcepcion | CadenaLargaExcepcion ex) {
+                System.out.println("Error:" + ex.getMessage());
+            }
+        }
+    }
+
+    private void cargarNombre() {
+        String ax = "cat";
+        boolean flag = false;
+        while (!flag) {
+            try {
+                System.out.print("Nombre:");
+                ax = Consola.readLine();
+                setNombre(ax);
+                flag = true;
+            } catch (CadenaVaciaExcepcion | CadenaLargaExcepcion ex) {
+                System.out.println("Error:" + ex.getMessage());
+            }
+        }
     }
 
     @Override
@@ -144,6 +227,36 @@ public class Inscriptos {
         sb.append(", estado=").append(estado);
         sb.append('}');
         return sb.toString();
+    }
+
+    @Override
+    public boolean igualQue(Object op2) {
+        Inscriptos x = (Inscriptos) op2;
+        return this.dni == x.getDni();
+    }
+
+    @Override
+    public boolean menorQue(Object op2) {
+        Inscriptos x = (Inscriptos) op2;
+        return this.dni < x.getDni();
+    }
+
+    @Override
+    public boolean menorIgualQue(Object op2) {
+        Inscriptos x = (Inscriptos) op2;
+        return this.dni <= x.getDni();
+    }
+
+    @Override
+    public boolean mayorQue(Object op2) {
+        Inscriptos x = (Inscriptos) op2;
+        return this.dni >x.getDni();
+    }
+
+    @Override
+    public boolean mayorIgualQue(Object op2) {
+        Inscriptos x = (Inscriptos) op2;
+        return this.dni >= x.getDni();
     }
     
 }
