@@ -121,6 +121,9 @@ public class Inscriptos implements Comparador{
         cargarDNI();
         cargarApellido();
         cargarNombre();
+        cargarFormaPago();
+        cargarMontoCurso();
+        cargarEstado();
     }
     
     public void cargarDNI() {
@@ -166,6 +169,64 @@ public class Inscriptos implements Comparador{
                 System.out.println("Error:" + ex.getMessage());
             }
         }
+    }
+    
+    private void cargarMontoCurso() {
+        double ax = 0;
+        boolean flag = false;
+        while (!flag) {
+            try {
+                System.out.print("Monto del Curso:");
+                ax = Consola.readDouble();
+                setMontoCuento(ax);
+                flag = true;
+            } catch (NumeroNegativoExcepcion | NumberFormatException ex) {
+                System.out.println("Error:" + ex.getMessage());
+            }
+        }
+    }
+    
+    private void cargarFormaPago() {
+        int ax = 0;
+        boolean flag = false;
+        while (!flag) {
+            try {
+                System.out.print("Forma de Pago (1-Pagado/2-Deuda):");
+                ax = Consola.readInt();
+                setFormaPago(ax);
+                flag = true;
+            } catch (NumeroNegativoExcepcion | NumberFormatException ex) {
+                System.out.println("Error:" + ex.getMessage());
+            }
+        }
+    }
+    
+    private void cargarEstado() {
+        String dat = "";
+        do {
+            System.out.printf("Estado del Reclamo (1.En gestion / 2.Solucionado):");
+            dat = Consola.readLine();
+        } while (!(dat.trim().length() > 0 && dat.trim().length() < 2));
+        int value = Integer.parseInt(dat);
+        if (value == 1) {
+            setEstado(false);
+        } else if (value == 2) {
+            setEstado(true);
+        }
+    }
+    
+    public void modificarDatos() {
+        
+    }
+    
+    private void menuModificacion() {
+        String space = " ";
+        String cat = "*";
+        int c = 37;
+        System.out.println(cat.repeat(c));
+        System.out.println("*" + space.repeat(9) + "MENU MODIFICACION" + space.repeat(9) + "*");
+        System.out.println(cat.repeat(c));
+        System.out.println("*1.Apellido" + space.repeat(c - 11) + "*");
     }
 
     @Override
