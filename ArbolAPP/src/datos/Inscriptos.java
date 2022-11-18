@@ -11,7 +11,7 @@ public class Inscriptos implements Comparador{
 
     private long dni;
     private int formaPago;
-    private double montoCuento;
+    private double montoCurso;
     private String apellido;
     private String nombre;
     private String telefono;
@@ -20,7 +20,7 @@ public class Inscriptos implements Comparador{
     public Inscriptos() {
         this.dni = 0;
         this.formaPago = 0;
-        this.montoCuento = 0;
+        this.montoCurso = 0;
         this.apellido = "";
         this.nombre = "";
         this.telefono = "";
@@ -30,7 +30,7 @@ public class Inscriptos implements Comparador{
     public Inscriptos(long dni, int formaPago, double montoCuento, String apellido, String nombre, String telefono, boolean estado) {
         this.dni = dni;
         this.formaPago = formaPago;
-        this.montoCuento = montoCuento;
+        this.montoCurso = montoCuento;
         this.apellido = apellido;
         this.nombre = nombre;
         this.telefono = telefono;
@@ -60,14 +60,14 @@ public class Inscriptos implements Comparador{
     }
 
     public double getMontoCuento() {
-        return montoCuento;
+        return montoCurso;
     }
 
     public void setMontoCuento(double montoCuento) throws NumeroNegativoExcepcion {
         if (montoCuento < 0) {
             throw new NumeroNegativoExcepcion();
         }
-        this.montoCuento = montoCuento;
+        this.montoCurso = montoCuento;
     }
 
     public String getApellido() {
@@ -121,6 +121,7 @@ public class Inscriptos implements Comparador{
         cargarDNI();
         cargarApellido();
         cargarNombre();
+        cargarTelefono();
         cargarFormaPago();
         cargarMontoCurso();
         cargarEstado();
@@ -164,6 +165,21 @@ public class Inscriptos implements Comparador{
                 System.out.print("Nombre:");
                 ax = Consola.readLine();
                 setNombre(ax);
+                flag = true;
+            } catch (CadenaVaciaExcepcion | CadenaLargaExcepcion ex) {
+                System.out.println("Error:" + ex.getMessage());
+            }
+        }
+    }
+    
+    private void cargarTelefono() {
+        String ax = "cat";
+        boolean flag = false;
+        while (!flag) {
+            try {
+                System.out.print("Telefono:");
+                ax = Consola.readLine();
+                setTelefono(ax);
                 flag = true;
             } catch (CadenaVaciaExcepcion | CadenaLargaExcepcion ex) {
                 System.out.println("Error:" + ex.getMessage());
@@ -216,7 +232,33 @@ public class Inscriptos implements Comparador{
     }
     
     public void modificarDatos() {
-        
+        int op = 0;
+        do {            
+            menuModificacion();
+            op = Consola.readInt();
+            switch (op) {
+                case 1:
+                    cargarApellido();
+                    break;
+                case 2:
+                    cargarNombre();
+                    break;
+                case 3:
+                    cargarTelefono();
+                    break;
+                case 4:
+                    cargarFormaPago();
+                    break;
+                case 5:
+                    cargarMontoCurso();
+                    break;
+                case 6:
+                    cargarEstado();
+                    break;
+                default:
+                    throw new AssertionError();
+            }
+        } while (op != 0);
     }
     
     private void menuModificacion() {
@@ -227,6 +269,13 @@ public class Inscriptos implements Comparador{
         System.out.println("*" + space.repeat(9) + "MENU MODIFICACION" + space.repeat(9) + "*");
         System.out.println(cat.repeat(c));
         System.out.println("*1.Apellido" + space.repeat(c - 11) + "*");
+        System.out.println("*2.Nombre" + space.repeat(c - 13) + "*");
+        System.out.println("*3.Telefono" + space.repeat(c - 11) + "*");
+        System.out.println("*4.Forma de Pago" + space.repeat(c - 6) + "*");
+        System.out.println("*5.Monto de Curso" + space.repeat(c - 5) + "*");
+        System.out.println("*6.Estado" + space.repeat(c - 13) + "*");
+        System.out.println(cat.repeat(c));
+        System.out.print("--->");
     }
 
     @Override
@@ -234,7 +283,7 @@ public class Inscriptos implements Comparador{
         int hash = 7;
         hash = 67 * hash + (int) (this.dni ^ (this.dni >>> 32));
         hash = 67 * hash + this.formaPago;
-        hash = 67 * hash + (int) (Double.doubleToLongBits(this.montoCuento) ^ (Double.doubleToLongBits(this.montoCuento) >>> 32));
+        hash = 67 * hash + (int) (Double.doubleToLongBits(this.montoCurso) ^ (Double.doubleToLongBits(this.montoCurso) >>> 32));
         hash = 67 * hash + Objects.hashCode(this.apellido);
         hash = 67 * hash + Objects.hashCode(this.nombre);
         hash = 67 * hash + Objects.hashCode(this.telefono);
@@ -260,7 +309,7 @@ public class Inscriptos implements Comparador{
         if (this.formaPago != other.formaPago) {
             return false;
         }
-        if (Double.doubleToLongBits(this.montoCuento) != Double.doubleToLongBits(other.montoCuento)) {
+        if (Double.doubleToLongBits(this.montoCurso) != Double.doubleToLongBits(other.montoCurso)) {
             return false;
         }
         if (this.estado != other.estado) {
@@ -278,15 +327,12 @@ public class Inscriptos implements Comparador{
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Inscriptos{");
-        sb.append("dni=").append(dni);
-        sb.append(", formaPago=").append(formaPago);
-        sb.append(", montoCuento=").append(montoCuento);
-        sb.append(", apellido=").append(apellido);
-        sb.append(", nombre=").append(nombre);
-        sb.append(", telefono=").append(telefono);
-        sb.append(", estado=").append(estado);
-        sb.append('}');
+        sb.append("DNI:").append(this.dni).append("\n");
+        sb.append("Apellido y Nombre:").append(this.apellido).append(" ").append(this.nombre).append("\n");
+        sb.append("Telefono:").append(this.telefono).append("\n");
+        sb.append("Forma de Pago:").append(this.formaPago).append("\n");
+        sb.append("Monto del Curso:").append(this.montoCurso).append("\n");
+        sb.append("Estado:").append(this.estado);
         return sb.toString();
     }
 
